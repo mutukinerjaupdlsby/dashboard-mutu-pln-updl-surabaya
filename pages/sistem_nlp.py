@@ -17,7 +17,7 @@ from models import (
 )
 
 from utils.helpers import format_time, is_valid_tex
-# PROCESS D
+
 def process_data_nlp(df):
     start_time = time.time()
 
@@ -78,7 +78,7 @@ def format_percentage(x):
         return f"{float(x):.2%}"
     except:
         return "-
-# MAIN P
+
 def render_sistem_nlp():
 
     st.markdown("""
@@ -137,21 +137,21 @@ def render_sistem_nlp():
                 st.altair_chart(chart, use_container_width=True)
 
             # TABLE 
-            st.markdown("### 📋 Detail Data")
+            if "analysis_done" in st.session_state and st.session_state.analysis_done and "df" in st.session_state:
+                result_data = st.session_state.df.copy()
+                for col_conf in ['Confidence', 'Indikator Confidence', 'Keluhan Confidence']:
+                    if col_conf in result_data.columns:
+                        result_data[col_conf] = result_data[col_conf].apply(
+                            lambda x: f"{float(x):.2%}" if pd.notna(x) else '-'
+                        )
 
-            result_data = df.copy()
+                st.dataframe(result_data, use_container_width=True, height=500)
+                st.caption(f"Menampilkan {len(result_data)} baris data")
 
-            for col in ['Confidence', 'Indikator Confidence', 'Keluhan Confidence']:
-                if col in result_data.columns:
-                    result_data[col] = result_data[col].apply(format_percentage)
-
-            st.dataframe(result_data, use_container_width=True, height=500)
-
-            # DOWNLOAD
-            col1, col2 = st.columns(2)
-
-            with col1:
-                csv = result_data.to_csv(index=False).encode("utf-8")
+            # Download buttons
+            col_download1, col_download2 = st.columns(2)
+            with col_download1:
+                csv = result_data.to_csv(index=False).encode('utf-8')
                 st.download_button("Download CSV", csv, "hasil.csv")
 
             with col2:

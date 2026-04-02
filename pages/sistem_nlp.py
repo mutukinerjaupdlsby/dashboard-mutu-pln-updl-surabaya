@@ -364,7 +364,7 @@ def render_sistem_nlp():
                     result_data[col_conf] = result_data[col_conf].apply(lambda x: f"{x:.2%}" if isinstance(x, (int, float)) and pd.notna(x) else '-')
             
             styled_df = result_data.style.map(color_sentiment, subset=['Sentimen'])
-            st.dataframe(display_df, use_container_width=True, height=500)
+            st.dataframe(styled_df, use_container_width=True, height=500)
             st.caption(f"Menampilkan {len(result_data)} baris data")
             
             # Download buttons

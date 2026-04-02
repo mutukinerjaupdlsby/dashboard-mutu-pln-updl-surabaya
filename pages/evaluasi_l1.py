@@ -373,7 +373,7 @@ def render_evaluasi_l1():
         if "Sentimen" in display_df.columns:
             styled_df = styled_df.map(color_sentiment, subset=["Sentimen"])
         
-        st.dataframe(styled_df, use_container_width=True, height=500)
+        st.dataframe(display_df, use_container_width=True, height=500)
         st.caption(f"Menampilkan {len(display_df)} baris data")
         
         # Download buttons

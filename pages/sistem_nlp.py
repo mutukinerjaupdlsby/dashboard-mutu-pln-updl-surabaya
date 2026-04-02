@@ -359,27 +359,15 @@ def render_sistem_nlp():
             
             # Data table
             if "analysis_done" in st.session_state and st.session_state.analysis_done and "df" in st.session_state:
-            st.markdown(f"<h5 style='margin-top:30px'>📋 Detail Data Hasil Sistem NLP</h5>", unsafe_allow_html=True)
-            result_data = st.session_state.df.copy()
-            
-            for col_conf in ['Confidence', 'Indikator Confidence', 'Keluhan Confidence']:
-                if col_conf in result_data.columns:
-                    result_data[col_conf] = result_data[col_conf].apply(
-                        lambda x: f"{float(x):.2%}" if x is not None and str(x) != 'nan' else '-'
-                    )
-                
-            def highlight_sentiment(val):
-                if val == "Positif":
-                    return "color: #28a745; font-weight: 600;"
-                elif val == "Netral":
-                    return "color: #ffc107; font-weight: 600;"
-                elif val == "Negatif":
-                    return "color: #dc3545; font-weight: 600;"
-                return ""
+                result_data = st.session_state.df.copy()
+                for col_conf in ['Confidence', 'Indikator Confidence', 'Keluhan Confidence']:
+                    if col_conf in result_data.columns:
+                        result_data[col_conf] = result_data[col_conf].apply(
+                            lambda x: f"{float(x):.2%}" if pd.notna(x) else '-'
+                        )
 
-            styled_df = result_data.style.map(highlight_sentiment, subset=['Sentimen'])
-            st.dataframe(styled_df, use_container_width=True, height=500)
-            st.caption(f"Menampilkan {len(result_data)} baris data")
+                st.dataframe(result_data, use_container_width=True, height=500)
+                st.caption(f"Menampilkan {len(result_data)} baris data")
             
             # Download buttons
             col_download1, col_download2 = st.columns(2)

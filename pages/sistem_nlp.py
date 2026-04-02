@@ -16,7 +16,13 @@ from models import (
     load_keluhan_model, load_keluhan_labels, predict_keluhan, validate_keluhan_with_indikator
 )
 
-from utils.helpers import format_time, is_valid_tex
+from utils.helpers import format_time, is_valid_text
+
+def format_percentage(x):
+    try:
+        return f"{float(x):.2%}"
+    except:
+        return "-"
 
 def process_data_nlp(df):
     start_time = time.time()
@@ -70,17 +76,9 @@ def process_data_nlp(df):
 
     st.session_state.df = df
     st.session_state.processing_time = time.time() - start_time
-    st.session_state.analysis_done = Tru
-
-
-def format_percentage(x):
-    try:
-        return f"{float(x):.2%}"
-    except:
-        return "-
+    st.session_state.analysis_done = True
 
 def render_sistem_nlp():
-
     st.markdown("""
     <div class='page-header'>
         <h1 class='page-title'>💬 Sistem NLP</h1>
@@ -88,10 +86,10 @@ def render_sistem_nlp():
     </div>
     """, unsafe_allow_html=True)
 
-    tab1, tab2 = st.tabs(["📁 Import File", "📝 Input Teks"]
-    # TAB
-    with tab1:
+    tab1, tab2 = st.tabs(["📁 Import File", "📝 Input Teks"])
 
+    # TAB 1: Import File
+    with tab1:
         uploaded = st.file_uploader("Upload CSV/XLSX", type=["csv", "xlsx"])
 
         if uploaded is None:
@@ -111,7 +109,6 @@ def render_sistem_nlp():
                     
         # HASIL ANALISIS
         if st.session_state.get("analysis_done"):
-
             df = st.session_state.df.copy()
 
             df_valid = df[df["Sentimen"] != "Invalid"]
@@ -148,18 +145,18 @@ def render_sistem_nlp():
                 st.dataframe(result_data, use_container_width=True, height=500)
                 st.caption(f"Menampilkan {len(result_data)} baris data")
 
-            # Download buttons
-            col_download1, col_download2 = st.columns(2)
-            with col_download1:
-                csv = result_data.to_csv(index=False).encode('utf-8')
-                st.download_button("Download CSV", csv, "hasil.csv")
+                # Download buttons
+                col_download1, col_download2 = st.columns(2)
+                with col_download1:
+                    csv = result_data.to_csv(index=False).encode('utf-8')
+                    st.download_button("Download CSV", csv, "hasil.csv")
 
-            with col2:
-                output = BytesIO()
-                with pd.ExcelWriter(output, engine='openpyxl') as writer:
-                    result_data.to_excel(writer, index=False)
+                with col_download2:
+                    output = BytesIO()
+                    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                        result_data.to_excel(writer, index=False)
 
-                st.download_button("Download Excel", output.getvalue(), "hasil.xlsx")
+                    st.download_button("Download Excel", output.getvalue(), "hasil.xlsx")
     
     # Tab 2: Input Teks
     with tab2:

@@ -89,6 +89,7 @@ def process_data_nlp(df):
 
 # Render halaman Sistem NLP
 def render_sistem_nlp():
+    import pandas as pd
     st.markdown("""
     <div class='page-header'>
         <h1 class='page-title'>💬 Sistem NLP</h1>
@@ -364,7 +365,8 @@ def render_sistem_nlp():
             for col_conf in ['Confidence', 'Indikator Confidence', 'Keluhan Confidence']:
                 if col_conf in result_data.columns:
                     result_data[col_conf] = result_data[col_conf].apply(
-                        lambda x: f"{x:.2%}" if isinstance(x, (int, float)) and pd.notna(x) else '-'
+                        lambda x: f"{float(x):.2%}" if x is not None and str(x) != 'nan' else '-'
+                    )
                 
             def highlight_sentiment(val):
                 if val == "Positif":
